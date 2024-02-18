@@ -97,20 +97,20 @@ class Snake(GameObject):
     def get_head_position(self):
         return self.positions[0]
 
-    def handle_keys(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                raise SystemExit
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP and self.direction != DOWN:
-                    self.next_direction = UP
-                elif event.key == pygame.K_DOWN and self.direction != UP:
-                    self.next_direction = DOWN
-                elif event.key == pygame.K_LEFT and self.direction != RIGHT:
-                    self.next_direction = LEFT
-                elif event.key == pygame.K_RIGHT and self.direction != LEFT:
-                    self.next_direction = RIGHT
+def handle_keys(self):
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            raise SystemExit
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP and self.direction != DOWN:
+                self.next_direction = UP
+            elif event.key == pygame.K_DOWN and self.direction != UP:
+                self.next_direction = DOWN
+            elif event.key == pygame.K_LEFT and self.direction != RIGHT:
+                self.next_direction = LEFT
+            elif event.key == pygame.K_RIGHT and self.direction != LEFT:
+                self.next_direction = RIGHT
 
 
 def main():
@@ -128,7 +128,7 @@ def main():
         clock.tick(SPEED)
 
         # Опрос клавиатуры на определение команды изменения направления
-        handle_keys(snake)
+        
 
         # Изменение направление при наличии команды
         snake.update_direction()
