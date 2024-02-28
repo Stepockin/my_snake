@@ -1,4 +1,4 @@
-from random import randint
+import random
 import pygame
 
 # Инициализация Pygame:
@@ -53,8 +53,8 @@ class Apple(GameObject):
 
     def randomize_position(self):
         """Рандомизация позиции яблока."""
-        x_position = randint(0, GRID_WIDTH - 1) * GRID_SIZE
-        y_position = randint(0, GRID_HEIGHT - 1) * GRID_SIZE
+        x_position = random.randint(0, GRID_WIDTH - 1) * GRID_SIZE
+        y_position = random.randint(0, GRID_HEIGHT - 1) * GRID_SIZE
         self.position = (x_position, y_position)
 
     def draw(self, surface):
