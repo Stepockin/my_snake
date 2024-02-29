@@ -33,8 +33,10 @@ clock = pygame.time.Clock()
 
 class GameObject:
     """Базовый класс для игровых объектов."""
+    position = (0, 0)
+    body_color = (255, 255, 255)
 
-    def __init__(self, position=(0, 0), body_color=(255, 255, 255)):
+    def __init__(self, position=position, body_color=body_color):
         """Инициализация объекта."""
         self.position = position
         self.body_color = body_color
@@ -46,8 +48,10 @@ class GameObject:
 
 class Apple(GameObject):
     """Класс, описывающий объект яблока."""
+    position = (GRID_WIDTH // 2 * GRID_SIZE, GRID_HEIGHT // 2 * GRID_SIZE)
+    body_color = APPLE_COLOR
 
-    def __init__(self, position=(0, 0), body_color=(255, 0, 0)):
+    def __init__(self, position=position, body_color=body_color):
         """Инициализация яблока."""
         super().__init__(position, body_color)
 
@@ -59,32 +63,30 @@ class Apple(GameObject):
 
     def draw(self, surface):
         """Отрисовка яблока."""
-        rect = pygame.Rect(self.position[0], self.position[1], GRID_SIZE,
-                           GRID_SIZE)
+        rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
         pygame.draw.rect(surface, self.body_color, rect)
         pygame.draw.rect(surface, BORDER_COLOR, rect, 1)
 
 
 class Snake(GameObject):
     """Класс, описывающий объект змейки."""
+    position = (GRID_WIDTH // 4 * GRID_SIZE, GRID_HEIGHT // 2 * GRID_SIZE)
+    body_color = SNAKE_COLOR
 
-    def __init__(self, position=(0, 0), body_color=(0, 255, 0)):
+    def __init__(self, position=position, body_color=body_color):
         """Инициализация змейки."""
         super().__init__(position, body_color)
         self.length = 1
         self.positions = [position]
         self.direction = RIGHT
-        self.next_direction = None
 
-    def update_direction(self):
-        """Обновление направления движения змейки."""
-        if self.next_direction:
-            self.direction = self.next_direction
-            self.next_direction = None
+    def update_direction(self, next_direction):
+        """Обновление движения """
+        self.direction = next_direction
 
     def move(self):
         """Перемещение змейки."""
-        x, y = self.positions[0]
+        x, y = self.get_head_position()
         dx, dy = self.direction
         new_head = ((x + dx * GRID_SIZE) % SCREEN_WIDTH, (y + dy * GRID_SIZE) %
                     SCREEN_HEIGHT)
@@ -98,6 +100,11 @@ class Snake(GameObject):
             rect = pygame.Rect(position[0], position[1], GRID_SIZE, GRID_SIZE)
             pygame.draw.rect(surface, self.body_color, rect)
             pygame.draw.rect(surface, BORDER_COLOR, rect, 1)
+        last_position = self.positions[-1]
+        last_rect = pygame.Rect(last_position[0], last_position[1], GRID_SIZE,
+                                GRID_SIZE)
+        pygame.draw.rect(surface, self.body_color, last_rect)
+        pygame.draw.rect(surface, BORDER_COLOR, last_rect, 1)
 
     def get_head_position(self):
         """Получение позиции головы змейки."""
@@ -119,28 +126,25 @@ def handle_keys(game_object):
             raise SystemExit
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP and game_object.direction != DOWN:
-                game_object.next_direction = UP
+                game_object.update_direction(UP)
             elif event.key == pygame.K_DOWN and game_object.direction != UP:
-                game_object.next_direction = DOWN
+                game_object.update_direction(DOWN)
             elif event.key == pygame.K_LEFT and game_object.direction != RIGHT:
-                game_object.next_direction = LEFT
+                game_object.update_direction(LEFT)
             elif event.key == pygame.K_RIGHT and game_object.direction != LEFT:
-                game_object.next_direction = RIGHT
+                game_object.update_direction(RIGHT)
 
 
 def main():
     """Основная функция игры."""
-    apple = Apple((GRID_WIDTH // 2 * GRID_SIZE, GRID_HEIGHT // 2 * GRID_SIZE),
-                  APPLE_COLOR)
-    snake = Snake((GRID_WIDTH // 4 * GRID_SIZE, GRID_HEIGHT // 2 * GRID_SIZE),
-                  SNAKE_COLOR)
+    apple = Apple()
+
+    snake = Snake()
 
     while True:
         clock.tick(SPEED)
 
         handle_keys(snake)
-
-        snake.update_direction()
 
         snake.move()
 
